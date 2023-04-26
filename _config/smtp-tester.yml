@@ -1,0 +1,6 @@
+---
+Name: silverstripe-smtp-tester
+---
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+  - 'innis-maggiore/silverstripe-smtp-tester:css/menu-icon.css'

@@ -1,4 +1,4 @@
-# SilverStripe 3 SMTP Tester
+# SilverStripe SMTP Tester
 
 This module provides an easy way to test the SMTP configuration of your SilverStripe site from the admin area.
 
@@ -6,14 +6,12 @@ This module provides an easy way to test the SMTP configuration of your SilverSt
 
 ##### Using Composer
 ```html
-$ composer require creativecodelabs/silverstripe-smtp-tester
+$ composer require innis-maggiore/silverstripe-smtp-tester ^4.0
 ```
 * Run `/dev/build?flush=1`
 
-##### Manual Installation
+Use the `1.0` tag ([ss3 branch](https://github.com/innis-maggiore/silverstripe-smtp-tester/tree/ss3)) for SilverStripe 3 sites.
 
-* Install the contents of this repository in the root of your SilverStripe project in a directory named "silverstripe-smtp-tester".
-* Run `/dev/build?flush=1`
 
 ## User Whitelist
 
@@ -21,9 +19,9 @@ By default, the module will be available to anyone with the "Access to SMTP Test
 
 You can add an additional restriction by setting the SmtpTester.user_domain_whitelist config option in your config.yml file.
 
-**mysite/_config/config.yml**
+**app/_config/mysite.yml**
 ```html
-SmtpTester:
+InnisMaggiore\SilverstripeSMTPTester\SmtpTester:
   user_domain_whitelist: 'mycompany.com'
 ```
 

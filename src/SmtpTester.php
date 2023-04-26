@@ -1,8 +1,26 @@
 <?php
 
+namespace InnisMaggiore\SilverstripeSMTPTester;
+
+use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Security\Security;
+use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Permission;
+use SilverStripe\View\Requirements;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Control\Director;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Control\Email\Email;
+
 class SmtpTester extends LeftAndMain implements PermissionProvider {
     private static $menu_title = 'SMTP Tester';
-    private static $menu_icon = 'silverstripe-smtp-tester/images/icon-email.png';
+    private static $menu_icon_class = "icon menu-icon silverstripe-smtp-tester";
     private static $url_segment = 'smtp-tester';
 
     private static $allowed_actions = array (
@@ -12,7 +30,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
     public function init() {
         parent::init();
 
-        Requirements::css('silverstripe-smtp-tester/css/smtp-tester.css');
+        Requirements::css('innis-maggiore/silverstripe-smtp-tester:css/smtp-tester.css');
     }
 
     public function providePermissions() {
@@ -53,7 +71,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
 
     public function SmtpTesterForm() {
         $siteName = SiteConfig::current_site_config()->Title;
-        $memberEmail = Member::currentUser()->Email;
+        $memberEmail = Security::getCurrentUser()->Email;
         $adminEmail = Config::inst()->get('Email', 'admin_email');
         $fieldsArr = array();
 
@@ -72,7 +90,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
 
         $fields = new FieldList($fieldsArr);
 
-        $sendTestEmailButton = FormAction::create('send_test_email', 'Send Test Email');
+        $sendTestEmailButton = FormAction::create('send_test_email', 'Send Test Email')->addExtraClass('btn-primary');
 
         $actions = new FieldList($sendTestEmailButton);
 
@@ -89,7 +107,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
 
     public function send_test_email($data, Form $form) {
         $siteName = SiteConfig::current_site_config()->Title;
-        $memberEmail = Member::currentUser()->Email;
+        $memberEmail = Security::getCurrentUser()->Email;
         $errorMessage = "";
 
         $to = $data['EmailTo'] && $data['EmailTo'] != "" ? $data['EmailTo'] : $memberEmail;
@@ -104,7 +122,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
         try {
             $email = new Email($from,$to,$subject,$message);
             $status = $email->send();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $status = false;
             $errorMessage = " Error Message: {$e->getMessage()}";
         }
