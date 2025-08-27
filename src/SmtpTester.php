@@ -15,7 +15,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Control\Email\Email;
 
 class SmtpTester extends LeftAndMain implements PermissionProvider {
@@ -23,9 +23,9 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
     private static $menu_icon_class = "icon menu-icon silverstripe-smtp-tester";
     private static $url_segment = 'smtp-tester';
 
-    private static $allowed_actions = array (
+    private static $allowed_actions = [
         'SmtpTesterForm'
-    );
+    ];
 
     public function init() {
         parent::init();
@@ -34,13 +34,13 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
     }
 
     public function providePermissions() {
-        return array(
-            "CMS_ACCESS_SmtpTester" => array(
+        return [
+            "CMS_ACCESS_SmtpTester" => [
                 "name" => "Access to SMTP Tester section",
                 "category" => "CMS Access",
                 "help" => "Allow use of the SMTP Tester"
-            )
-        );
+            ]
+        ];
     }
 
     public function canView($member = null) {
@@ -50,20 +50,20 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
             if (strpos($userDomainWhitelist,",") !== false) {
                 $userDomainWhitelist = explode(",",$userDomainWhitelist);
             } else {
-                $userDomainWhitelist = array($userDomainWhitelist);
+                $userDomainWhitelist = [$userDomainWhitelist];
             }
 
             $emailParts = explode("@",$member->Email);
 
             if (count($emailParts) == 1) {
-            	$domain = $emailParts[0];
-			} else {
-				$domain = $emailParts[1];
-			}
+                $domain = $emailParts[0];
+            } else {
+                $domain = $emailParts[1];
+            }
 
-			if (!in_array($domain,$userDomainWhitelist)) {
-				return false;
-			}
+            if (!in_array($domain,$userDomainWhitelist)) {
+                return false;
+            }
         }
 
         return Permission::check("CMS_ACCESS_SmtpTester");
@@ -73,7 +73,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
         $siteName = SiteConfig::current_site_config()->Title;
         $memberEmail = Security::getCurrentUser()->Email;
         $adminEmail = Config::inst()->get('Email', 'admin_email');
-        $fieldsArr = array();
+        $fieldsArr = [];
 
         if (!filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
             $adminEmail = "test@".str_replace(Director::protocol(),"",Director::protocolAndHost());
@@ -94,9 +94,7 @@ class SmtpTester extends LeftAndMain implements PermissionProvider {
 
         $actions = new FieldList($sendTestEmailButton);
 
-        $required = new RequiredFields(
-            array()
-        );
+        $required = new RequiredFieldsValidator([]);
 
         $form = new Form($this, 'SmtpTesterForm', $fields, $actions, $required);
 
